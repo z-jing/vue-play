@@ -4,6 +4,7 @@
     <div class="bar">
       <router-link to="/">HelloWorld</router-link>
       <router-link to="/startElementUI">startElementUI</router-link>
+      <router-link to="/tableTree">tableTree</router-link>
     </div>
 
     <!--嵌套children-->
