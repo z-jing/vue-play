@@ -34,27 +34,72 @@
     components: {treeTable},
     methods: {
       orderByFunc(val) {
-        console.log('排序')
         alert(val)
       },
       editRow(m) {
         this.editIndex = m.count;
-        console.log('编辑', m)
       },
-      handleCalculation(m){
-        console.log('保存===', m)
-        let amount = 0;
-        // 求和
-        m.planItemTimeDtoList.forEach(item => {
-          amount = amount + Number(item.planAmount)
-        })
-        m.planTotalAmount = amount
+      handleCalculation(m, planCycle){
+//        let amount = 0;
+//        // 求和
+//        m.planItemTimeDtoList.forEach(item => {
+//          amount = amount + Number(item.planAmount)
+//        })
+//        m.planTotalAmount = amount;
+
+        // todo 根据 m.id 找出上级
+//        let iteration = true;
+//        let reducePlanDataFunc = (data, id, parent) => {
+//          data.map((current, i) => {
+//            if (current.planItemDtoList.length > 0 && current.id !== id && iteration) {
+//              reducePlanDataFunc(current.planItemDtoList, id, current)
+//            }
+//
+//            if (current.id === id) {
+//              console.log(parent);
+//              // 计算planItemTimeDtoList每个对象的planAmount值
+//              let timeTotal = 0;
+//              parent.planItemDtoList.map((childItem) => {
+//                childItem.planItemTimeDtoList.map((childTimeItem) => {
+//                  if (childTimeItem.planCycle === planCycle) {
+//                    timeTotal = timeTotal + childTimeItem.planAmount
+//                  }
+//                });
+//              });
+//              console.log(timeTotal)
+////              parent.planItemTimeDtoList
+//              parent.planItemTimeDtoList.map((timeItem, j) => {
+//                if (timeItem.planCycle === planCycle) {
+////                  timeItem.planAmount = timeTotal
+//
+//                }
+//              });
+//
+//
+//
+//              if (parent.pid !== '-1') {
+//                reducePlanDataFunc(this.treeDataSource, parent.id)
+//              }
+//
+//              iteration = false;
+//              return false;
+//            }
+//          })
+//        }
+//
+//        if (m.pid !== '-1') {
+//          reducePlanDataFunc(this.treeDataSource, m.id)
+//        }
+
+
+
+
       },
       deleteFunc(m) {
-        console.log('删除')
+//        console.log('删除')
       },
       handlerExpand(m) {
-        console.log('展开/收缩')
+//        console.log('展开/收缩')
         m.isExpand = !m.isExpand
       }
       // getTreeData() {

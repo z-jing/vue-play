@@ -22,11 +22,12 @@
               <!--金额输入-->
               <td class="td4" v-for="(timeItem, index) in model.planItemTimeDtoList">
                 <InputNumber
+                  :disabled="model.planItemDtoList.length > 0"
                   type="text"
                   v-model="timeItem.planAmount"
                   v-if="editIndex === model.count"
                   :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                  @on-change="handleCalculation(model)"
+                  @on-change="handleCalculation(model, timeItem.planCycle)"
                 ></InputNumber>
                 <span v-else>{{number_format(timeItem.planAmount, 2, ".", ",")}}</span>
               </td>
@@ -142,9 +143,8 @@
       editRow(m) {
         this.$emit('editRow', m)
       },
-      handleCalculation(m){
-        console.log('1111', m)
-        this.$emit('handleCalculation', m)
+      handleCalculation(m, planCycle){
+        this.$emit('handleCalculation', m, planCycle)
       },
       number_format(number, decimals, dec_point, thousands_sep) {
         /*

@@ -1,7 +1,7 @@
 <template>
   <div class="tree-table">
     <div class="tree-head">
-      <table>
+      <table :class="{isTableLayout: (list[0].planItemTimeDtoList.length>=5 ? true : false)}">
         <tr>
           <td class="td1">科目名称</td>
           <td class="td2">科目性质</td>
@@ -68,7 +68,7 @@
     },
     methods: {
       initTreeData() {
-        console.log('处理前的:', JSON.parse(JSON.stringify(this.list)))
+//        console.log('处理前的:', JSON.parse(JSON.stringify(this.list)))
         // 这里一定要转化，要不然他们的值监听不到变化
         let tempData = JSON.parse(JSON.stringify(this.list))
         let count = -1;
@@ -86,7 +86,7 @@
           })
         }
         reduceDataFunc(tempData, 1)
-        console.log('处理后的:', tempData)
+//        console.log('处理后的:', tempData)
         this.treeDataSource = tempData
       },
       getMore() {
@@ -100,9 +100,66 @@
       editRow(m) {
         this.$emit('editRow', m)
       },
-      // 取消
-      handleCalculation(m) {
-        this.$emit('handleCalculation', m)
+      // 计算
+      handleCalculation(m, planCycle) {
+        let amount = 0;
+        // 求和
+        m.planItemTimeDtoList.forEach(item => {
+          amount = amount + Number(item.planAmount)
+        })
+        m.planTotalAmount = amount;
+
+        // todo 根据 m.id 找出上级
+        let iteration = true;
+        let reducePlanDataFunc = (data, id, parent) => {
+          data.map((current, i) => {
+            if (current.planItemDtoList.length > 0 && current.id !== id && iteration) {
+              reducePlanDataFunc(current.planItemDtoList, id, current)
+            }
+
+            if (current.id === id) {
+              // 计算planItemTimeDtoList每个对象的planAmount值
+              let timeTotal = 0, _planTotalAmount = 0;
+              parent.planItemDtoList.map((childItem) => {
+                _planTotalAmount = _planTotalAmount + childItem.planTotalAmount
+
+                childItem.planItemTimeDtoList.map((childTimeItem) => {
+                  if (childTimeItem.planCycle === planCycle) {
+                    timeTotal = timeTotal + childTimeItem.planAmount;
+                  }
+                });
+              });
+
+              parent.planTotalAmount = _planTotalAmount;
+              parent.planItemTimeDtoList.map((timeItem, j) => {
+                if (timeItem.planCycle === planCycle) {
+                  timeItem.planAmount = timeTotal
+                }
+              });
+
+
+
+              if (parent.pid !== '-1') {
+                reducePlanDataFunc(this.treeDataSource, parent.id)
+              }
+
+              iteration = false;
+              return false;
+            }
+          })
+        }
+
+        if (m.pid !== '-1') {
+          reducePlanDataFunc(this.treeDataSource, m.id)
+        }
+
+
+
+
+
+
+
+        this.$emit('handleCalculation', m, planCycle)
       },
       // 删除
       deleteFunc(m) {
@@ -129,6 +186,9 @@
   .tree-table {
     width: 100%;
     position: relative;
+    .isTableLayout {
+      table-layout: fixed;
+    }
     .center {
       text-align: center;
     }
@@ -164,10 +224,10 @@
       font-weight: 400;
       text-align: left;
     }
-    .td1 {width: 120px;padding-left:30px;padding-right: 10px;}
-    .td2 {width: 100px;padding-right: 10px;}
-    .td3 {width: 120px;padding-right: 10px;}
-    .td4 {width: 100px;padding-right: 10px;}
+    .td1 {width: 220px;padding-left:30px;padding-right: 10px;}
+    .td2 {width: 150px;padding-right: 10px;}
+    .td3 {width: 150px;padding-right: 10px;}
+    .td4 {width: 150px;padding-right: 10px;}
     .td5 {width: 100px;padding-right: 10px;}
     .td6 {width: 140px;padding-right: 10px;}
     .p20{padding-left:20px;}
